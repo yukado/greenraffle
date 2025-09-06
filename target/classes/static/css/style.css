@@ -1,0 +1,488 @@
+/* Allgemeine Styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #e0f7fa, #c8e6c9);
+}
+
+/* Navigation */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2ecc71; /* Grüner Farbton passend zum Thema */
+    padding: 10px 20px;
+    position: relative; /* Wichtig für die absolute Positionierung des Menüs im Responsive-Fall */
+}
+
+/* Logo */
+.navbar .logo a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Mittiger Bereich für den Benutzernamen */
+.navbar .user-display {
+    flex: 1;              /* Nimmt den verfügbaren Platz ein */
+    text-align: center;   /* Zentriert den Inhalt */
+}
+
+.navbar .user-display h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 20px;
+}
+
+/* Navigation Menu */
+.navbar .menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.navbar .menu li {
+    margin-left: 20px;
+}
+
+.navbar .menu li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.navbar .menu li a:hover {
+    color: #27ae60; /* Etwas dunkleres Grün beim Hover */
+}
+
+/* Dropdown Styles */
+.navbar .menu li.dropdown {
+    position: relative; /* Für das absolute Positionieren des Dropdowns */
+}
+
+/* Dropdown-Inhalt */
+.navbar .menu li .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #2ecc71; /* Gleiche Farbe wie die Navbar */
+    min-width: 100px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    top: 100%; /* Direkt unter dem Dropdown-Item */
+    left: 0;
+}
+
+/* Bei Hover Dropdown anzeigen */
+.navbar .menu li.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.navbar .menu li .dropdown-content a {
+    display: block;
+    padding: 10px 15px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.navbar .menu li .dropdown-content a:hover {
+    background-color: #27ae60;
+}
+
+/* Menü-Button (Hamburger) – zunächst versteckt */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Responsive Styles: Bei kleinen Bildschirmbreiten (max-width: 768px) */
+@media (max-width: 768px) {
+    /* Sicherstellen, dass die Navbar oberhalb des Sliders liegt */
+    .navbar {
+        position: relative;
+        z-index: 1001; /* ggf. anpassen, falls der Slider einen hohen z-index hat */
+    }
+
+    /* Das Dropdown-Menü, welches durch den Hamburger angezeigt wird */
+    .navbar .menu {
+        display: none; /* Standardmäßig ausblenden */
+        flex-direction: column;
+        position: absolute;
+        top: 60px;     /* Abstand unterhalb der Navbar, anpassen nach Bedarf */
+        right: 20px;
+        background-color: #2ecc71;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        padding: 10px 0;
+        width: 200px;
+        z-index: 1002; /* Höher als die Navbar, um sicher im Vordergrund zu erscheinen */
+    }
+
+    /* Einzelne Menü-Items zentrieren */
+    .navbar .menu li {
+        margin: 10px 0;
+        margin-left: 0;
+        text-align: center;
+    }
+
+    /* Hamburger-Button anzeigen */
+    .menu-toggle {
+        display: block;
+    }
+
+    /* Menü einblenden, wenn die Navbar den Status active hat */
+    .navbar.active .menu {
+        display: flex;
+    }
+}
+/* Slider Styles */
+.slider {
+    position: relative;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.slider .slide {
+    display: none;
+    position: relative;
+}
+
+.slider .slide.active {
+    display: block;
+    animation: fade 1s;
+}
+
+.slider img {
+    width: 100%;
+    height: auto;
+}
+
+.slider .caption {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(44, 62, 80, 0.6);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 20px;
+    text-align: center;
+}
+
+/* Slider Navigation (Pfeile) */
+.slider-nav span {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    padding: 16px;
+    color: #fff;
+    font-size: 30px;
+    user-select: none;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    transform: translateY(-50%);
+}
+
+.slider-nav .prev {
+    left: 20px;
+}
+
+.slider-nav .next {
+    right: 20px;
+}
+
+/* Fade-Animation */
+@keyframes fade {
+    from { opacity: 0.4; }
+    to { opacity: 1; }
+}
+
+/* Content Bereich */
+.content {
+    padding: 20px;
+    text-align: center;
+}
+
+/* Responsive Anpassungen */
+@media(max-width:768px) {
+    .navbar .menu li {
+        margin-left: 10px;
+    }
+    .slider .caption {
+        font-size: 16px;
+        padding: 8px 16px;
+    }
+}
+
+/* Statistik-Bereich */
+.statistics {
+    padding: 20px;
+    background-color: #f0f0f0; /* heller Hintergrund */
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-gap: 20px;
+}
+
+.stat-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-item h2 {
+    margin-bottom: 20px;
+}
+
+/* Ticket Erstellungs-Formular */
+.ticket-creation {
+    padding: 20px;
+    background-color: #fafafa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-container {
+    background-color: #fff;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+}
+
+.form-container h2 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-group button {
+    background-color: #2ecc71;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-group button:hover {
+    background-color: #27ae60;
+}
+
+/* Bereich für anstehende Lose */
+.upcoming-tickets {
+    padding: 20px;
+    background-color: #e9f7ef;
+}
+
+.upcoming-tickets .container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.upcoming-tickets h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.upcoming-tickets ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.upcoming-tickets .ticket-item {
+    background
+
+/* Stellt sicher, dass die Ticket-Liste korrekt als flexibles Grid funktioniert */
+.ticket-list {
+    display: flex;
+    flex-wrap: wrap; /* Erlaubt Umbruch auf kleinere Bildschirme */
+    justify-content: center; /* Zentriert die Boxen */
+    gap: 20px; /* Abstand zwischen den Tickets */
+}
+
+/* Entferne Standard-Stile für die Liste */
+.ticket-list ul {
+    padding: 0;
+    margin: 0;
+    list-style: none; /* Entfernt die Standard-Liste-Darstellung */
+}
+
+
+/* Container, der alle Tickets enthält und zentriert ausrichtet */
+/* Übergeordneter Container, der alle Tickets zentriert */
+/* Container, der alle Tickets zentriert */
+.ticket-details-section {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Container, der die Ticketkarten in einem flexiblen Grid anordnet */
+.ticket-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;           /* Abstand zwischen den Karten */
+  max-width: 1200px;    /* Breite des Containers – passt für maximal 2 Tickets nebeneinander */
+  width: 100%;
+}
+
+.ticket-card {
+  background-color: #fff;
+  border: 2px solid transparent; /* Standardmäßig kein sichtbarer Rahmen */
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  cursor: pointer; /* Deutet an, dass das Element interaktiv ist */
+}
+
+.ticket-card:hover {
+  transform: translateY(-5px); /* Leichte Aufwärtsbewegung */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border-color: #007BFF; /* Blauer Rahmen beim Hover für mehr Sichtbarkeit */
+}
+
+
+/* Header-Bereich der Ticketkarte */
+.ticket-header {
+  border-bottom: 1px solid #e0e0de;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+}
+
+.ticket-header h2 {
+  font-size: 1.2em;
+  margin: 0;
+}
+
+/* Body-Bereich der Ticketkarte */
+.ticket-body {
+  font-size: 0.95em;
+  line-height: 1.4em;
+  margin-bottom: 15px;
+}
+
+.ticket-detail {
+  margin: 5px 0;
+}
+
+/* Footer-Bereich, z. B. für den "Details"-Link */
+.ticket-footer {
+  text-align: right;
+}
+
+.ticket-footer a {
+  color: #007BFF;
+  text-decoration: none;
+  font-weight: bold;
+}
+ /* Container für die Login-Box */
+  .login-container {
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+
+  /* Überschrift zentriert in der Login-Box */
+  .login-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  /* Formularfelder */
+  .login-container form div {
+    margin-bottom: 15px;
+  }
+
+  .login-container form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+  }
+
+  .login-container form input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+  }
+
+  /* Button Styling */
+  .login-container form button {
+    width: 100%;
+    padding: 10px;
+    background: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .login-container form button:hover {
+    background: #0056b3;
+  }
+
+  /* Link zum Registrieren */
+  .login-container p {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9em;
+  }
+
+  .login-container p a {
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+/* Auf kleineren Bildschirmen: Eine Karte pro Zeile */
+@media (max-width: 768px) {
+  .ticket-card {
+    flex: 0 0 calc(100% - 20px);
+  }
+}

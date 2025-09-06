@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Green Raffle</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<style>
+    /* Container für die Login-Box */
+    .reg-container {
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto; /* Zentriert den Container horizontal */
+    text-align: center;
+    }
+
+    /* Restliche Styles bleiben unverändert */
+    .reg-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    }
+
+    .reg-container form div {
+    margin-bottom: 15px;
+    }
+
+    .reg-container form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+    }
+
+    .reg-container form input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    }
+
+    .reg-container form button {
+    width: 100%;
+    padding: 10px;
+    background: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    }
+
+    .reg-container form button:hover {
+    background: #0056b3;
+    }
+
+    .reg-container p {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9em;
+    }
+
+    .reg-container p a {
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: bold;
+    }
+        footer {
+        text-align: center;
+        padding: 2rem;
+        background: #222;
+        color: #ccc;
+        font-size: 0.9rem;
+        margin-top: 3rem;
+        border-top: 5px solid #28a745;
+    }
+
+    footer a {
+        color: #aaffaa;
+        text-decoration: none;
+    }
+
+    footer a:hover {
+        color: white;
+    }
+</style>
+<body>
+<!-- Header und Navigation -->
+<header>
+    <nav class="navbar" xmlns:th="http://www.w3.org/1999/xhtml">
+        <div class="logo">
+            <a th:href="@{/}">Green Raffle</a>
+        </div>
+        <!-- Menü-Button, der nur auf kleinen Bildschirmen sichtbar ist -->
+        <button class="menu-toggle" aria-label="Menü ein-/ausblenden">☰</button>
+        <ul class="menu">
+            <li><a th:href="@{/}" th:text="#{menu.home}">Home</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn"  th:text="#{menu.verlosungen}">Verlosungen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/raffles}" th:text="#{menu.laufend}">Laufende Verlosungen</a>
+                    <a th:href="@{/finished}" th:text="#{menu.beendet}">Beendet</a>
+                    <a th:href="@{/winnerstable}" th:text="#{menu.gewinner}">Gewinner</a>
+                </div>
+            </li>
+            <li><a th:href="@{/about}" th:text="#{menu.ueberuns}">Über uns</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="#{menu.sprachen}">Sprachen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/?lang=de}">DE</a>
+                    <a th:href="@{/?lang=en}">EN</a>
+                    <a th:href="@{/?lang=es}">ES</a>
+                    <a th:href="@{/?lang=fr}">FR</a>
+                    <a th:href="@{/?lang=it}">IT</a>
+                    <a th:href="@{/?lang=tr}">TR</a>
+                </div>
+            </li>
+            <li><a th:href="@{/login}"  th:text="#{menu.logreg}">Login/Registrieren</a></li>
+        </ul>
+    </nav>
+</header>
+<div class="reg-container">
+<h2>Registrierung</h2>
+<form th:action="@{/register}" th:object="${user}" method="post">
+    <div>
+        <label for="reg_email">Email-Adresse:</label>
+        <input type="email" th:field="*{email}" id="reg_email" placeholder="Deine Email-Adresse" required>
+    </div>
+    <div>
+        <label for="reg_password">Passwort:</label>
+        <input type="password" th:field="*{password}" id="reg_password" placeholder="Passwort" required>
+    </div>
+    <!-- Rolle als verstecktes Feld mit festem Wert "USER" -->
+   <!-- <input type="hidden" th:field="*{role}" value="USER"/> -->
+    <div>
+        <label for="vorname">Vorname:</label>
+        <input type="text" th:field="*{vorname}" id="vorname" placeholder="Dein Vorname" required>
+    </div>
+    <div>
+        <label for="nachname">Nachname:</label>
+        <input type="text" th:field="*{nachname}" id="nachname" placeholder="Dein Nachname" required>
+    </div>
+    <div>
+        <label for="gebdatum">Geb. Datum:</label>
+        <input type="date" th:field="*{gebdatum}" id="gebdatum" placeholder="Dein Geburtsdatum" required>
+    </div>
+    <div>
+        <label for="country">Land:</label>
+        <input type="text" th:field="*{country}" id="country" placeholder="In welchem Land lebst Du?" required>
+    </div>
+    <div>
+        <label for="iban">Iban:</label>
+        <input type="text" th:field="*{iban}" id="iban" placeholder="Deine Iban" required>
+    </div>
+    <div>
+        <button type="submit">Registrieren</button>
+    </div>
+    <div th:if="${message}">
+        <p th:text="${message}"></p>
+    </div>
+</form>
+
+<p>Schon registriert? <a th:href="@{/login}">Zum Login</a></p>
+</div>
+<!-- Footer -->
+<footer class="text-center py-3 bg-dark text-white">
+    <p th:text="#{follow_us}">Folge uns auf Social Media</p>
+    <p>&copy; 2025 <span th:text="#{brand}">Green Raffle</span> – <span th:text="#{rights_reserved}">Alle Rechte vorbehalten</span>.</p>
+</footer>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navbar = document.querySelector('.navbar');
+
+        menuToggle.addEventListener('click', function() {
+          navbar.classList.toggle('active');
+        });
+      });
+</script>
+</body>
+</html>

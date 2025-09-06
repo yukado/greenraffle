@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{title.verlosungen_aktuell}">Aktuelle Verlosungen</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<style>
+    .ticket-details-section {
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* Container, der die Ticketkarten in einem flexiblen Grid anordnet */
+    .ticket-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;           /* Abstand zwischen den Karten */
+      max-width: 1200px;    /* Breite des Containers – passt für maximal 2 Tickets nebeneinander */
+      width: 97%;
+    }
+
+    /* Einzelne Ticketkarte */
+   .ticket-card {
+  background-color: #fff;
+  border: 2px solid transparent; /* Standardmäßig kein sichtbarer Rahmen */
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  cursor: pointer; /* Deutet an, dass das Element interaktiv ist */
+}
+
+.ticket-card:hover {
+  transform: translateY(-5px); /* Leichte Aufwärtsbewegung */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border-color: #007BFF; /* Blauer Rahmen beim Hover für mehr Sichtbarkeit */
+}
+
+
+    /* Header-Bereich der Ticketkarte */
+  .ticket-header {
+    background-color: #2ecc71;
+    color: white;
+    border-radius: 10px 10px 0 0;
+    padding: 15px 10px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0de;
+    margin-bottom: 10px;
+  }
+  .ticket-header h2 {
+    font-size: 1.2em;
+    margin: 0;
+  }
+
+    /* Body-Bereich der Ticketkarte */
+    .ticket-body {
+      font-size: 0.95em;
+      line-height: 1.4em;
+      margin-bottom: 15px;
+    }
+
+    .ticket-detail {
+      margin: 5px 0;
+    }
+
+    /* Footer-Bereich, z. B. für den "Details"-Link */
+    .ticket-footer {
+      text-align: right;
+    }
+
+    .ticket-footer a {
+      color: #007BFF;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    /* Auf kleineren Bildschirmen: Eine Karte pro Zeile */
+    @media (max-width: 768px) {
+      .ticket-card {
+        flex: 0 0 calc(100% - 20px);
+      }
+    }
+</style>
+<body>
+<!-- Header und Navigation -->
+<header>
+    <nav class="navbar" xmlns:th="http://www.w3.org/1999/xhtml">
+        <!-- Linkes Element: Logo -->
+        <div class="logo">
+            <a th:href="@{/user/indexu}">Green Raffle</a>
+        </div>
+        <!-- Menü-Button, der nur auf kleinen Bildschirmen sichtbar ist -->
+        <button class="menu-toggle" aria-label="Menü ein-/ausblenden">☰</button>
+        <!-- Rechtes Element: Navigation -->
+        <ul class="menu">
+            <li><a th:href="@{/user/indexu}" th:text="#{menu.home}">Home</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" th:text="#{menu.verlosungen}">Verlosungen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/raffles_u}" th:text="#{menu.laufend}">Laufend</a>
+                    <a th:href="@{/user/finished_u}" th:text="#{menu.beendet}">Beendet</a>
+                    <a th:href="@{/user/winnerstable_u}" th:text="#{menu.gewinner}">Gewinner</a>
+                </div>
+            </li>
+            <li><a th:href="@{/user/about_u}" th:text="#{menu.ueberuns}">Über uns</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="${userName}">UserName</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/account}" th:text="#{menu.profil}">Account</a>
+                    <a th:href="@{/user/myraffles}" th:text="#{menu.myraffles}">Meine Lose</a>
+                    <a th:href="@{/logout}" th:text="#{menu.logout}">Logout</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="#{menu.sprachen}">Sprachen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/indexu(lang=de)}">DE</a>
+                    <a th:href="@{/user/indexu(lang=en)}">EN</a>
+                    <a th:href="@{/user/indexu(lang=es)}">ES</a>
+                    <a th:href="@{/user/indexu(lang=fr)}">FR</a>
+                    <a th:href="@{/user/indexu(lang=it)}">IT</a>
+                    <a th:href="@{/user/indexu(lang=tr)}">TR</a>
+                </div>
+            </li>
+            <li><a th:href="@{/user/cart}" th:text="#{menu.cart}">Warenkorb</a></li>
+        </ul>
+    </nav>
+</header>
+<!-- Hauptinhalt -->
+<main>
+    <h1 th:text="#{tickets.aktuelle_verlosungen}" style="text-align: center;">Laufende Verlosungen</h1>
+    <section class="ticket-details-section">
+        <div class="ticket-container">
+            <!-- Iteriere über das Array. Verwende "ticket" als lokale Variable -->
+            <div class="ticket-card" th:each="ticket : ${ticketData}" th:if="${ticket.remainingSeconds > 0}">
+
+                <!-- Header-Bereich -->
+                <div class="ticket-header">
+                    <h2 th:text="|${ticket.ticket.cityname} ${ticket.ticket.id}  #{ticket.winamount} ${ticket.ticket.winamount}|">
+                        Ticket Titel
+                    </h2>
+
+                </div>
+
+                <!-- Body-Bereich -->
+                <div class="ticket-body">
+                    <div th:with="startFormatted=${ticket.ticket.startDateTime != null
+                              ? #temporals.format(ticket.ticket.startDateTime, 'dd.MM.yyyy HH:mm')
+                              : 'n/a'},
+                                endFormatted=${ticket.ticket.endDateTime != null
+                              ? #temporals.format(ticket.ticket.endDateTime, 'dd.MM.yyyy HH:mm')
+                              : 'n/a'}">
+                        <p class="ticket-detail">
+                        <span th:text="#{ticket.schedule(${startFormatted}, ${endFormatted})}">
+                        Start: 01.01.2025 12:00   Ende: 01.01.2025 18:00
+                        </span>
+                        </p>
+                    </div>
+                    <p class="ticket-detail">
+                        <strong th:text="#{ticket.remaining}">Verbleibende Zeit:</strong>
+                        <span class="countdown" th:attr="data-seconds=${ticket.remainingSeconds}">Countdown loading...</span>
+                    </p>
+                    <p class="ticket-detail">
+                        <span th:text="#{ticket.available(${ticket.ticket.quantity}, ${ticket.ticket.startquantity})}">Verfügbare Lose: 0 von 0</span>
+                    </p>
+
+                    <p class="ticket-detail">
+                        <strong th:text="#{ticket.price}">Preis:</strong>
+                        <span th:text="${ticket.ticket.price}">0</span> €
+                    </p>
+                    <p class="ticket-detail">
+                        <span th:text="#{ticket.winchance(${ticket.ticket.description})}">1:XXX</span>
+                    </p>
+                </div>
+
+                <!-- Footer-Bereich -->
+                <div class="ticket-footer">
+                    <form th:action="@{/user/addtocart}" method="post">
+
+                        <label>
+                            <input type="hidden" name="ticketid" th:value="${ticket.ticket.id}">
+                        </label>
+
+                        <button type="submit" th:text="#{cart.add}">Zum Warenkorb hinzufügen</button>
+                        </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 Green Raffle. Alle Rechte vorbehalten.</p>
+</footer>
+<script th:inline="javascript">
+    // Warte bis der DOM vollständig geladen ist
+    document.addEventListener("DOMContentLoaded", function() {
+
+      // 1. COUNTDOWN-BEREICH
+      const countdownElements = document.querySelectorAll('.countdown');
+      countdownElements.forEach(function(countdownElement) {
+        let remainingSeconds = parseInt(countdownElement.getAttribute('data-seconds'), 10);
+
+        function updateCountdown() {
+          if (remainingSeconds <= 0) {
+            countdownElement.textContent = "Countdown abgelaufen";
+            return;
+          }
+
+          // Umrechnung in Tage, Stunden, Minuten und Sekunden
+          const days = Math.floor(remainingSeconds / 86400);
+          const hours = Math.floor((remainingSeconds % 86400) / 3600);
+          const minutes = Math.floor((remainingSeconds % 3600) / 60);
+          const seconds = remainingSeconds % 60;
+
+                     // Hier beziehst du die lokalisierten Texte aus den Message-Properties
+   var daysLabel = /*[[#{countdown.days}]]*/ "Tage";
+   var hoursLabel = /*[[#{countdown.hours}]]*/ "Stunden";
+   var minutesLabel = /*[[#{countdown.minutes}]]*/ "Minuten";
+   var secondsLabel = /*[[#{countdown.seconds}]]*/ "Sekunden";
+
+           // Füge die Werte und Texte zusammen
+   countdownElement.textContent =
+          days + " " + daysLabel + " " +
+          hours + " " + hoursLabel + " " +
+          minutes + " " + minutesLabel + " " +
+          seconds + " " + secondsLabel;
+
+          // Farbwechsel: von grün (viel Zeit) über gelb und orange bis rot (wenig Zeit)
+          if (remainingSeconds > 1800) {
+            countdownElement.style.color = "green";
+          } else if (remainingSeconds > 600) {  // <=1800 && >600
+            countdownElement.style.color = "yellow";
+          } else if (remainingSeconds > 300) {  // <=600 && >300
+            countdownElement.style.color = "orange";
+          } else {
+            countdownElement.style.color = "red";
+          }
+
+          remainingSeconds--; // Sekunden runterzählen
+        }
+
+        updateCountdown(); // Initialer Aufruf
+        setInterval(updateCountdown, 1000);
+      });
+
+      // 2. VERFÜGBARE LOSE—FARBWERTE ÄNDERN
+      // Stelle sicher, dass das HTML-Element mit der verfügbaren Anzahl existiert und ein eigenes Kind-Element (z. B. <span class="available-count">)
+      const ticketQuantityElement = document.getElementById('ticketQuantity');
+      if (ticketQuantityElement) {
+        const availableSpan = ticketQuantityElement.querySelector('.available-count');
+        if (availableSpan) {
+          // Lese die Werte aus den data-Attributen des Container-Elements
+          const available = parseInt(ticketQuantityElement.getAttribute('data-quantity'), 10);
+          const startQuantity = parseInt(ticketQuantityElement.getAttribute('data-startquantity'), 10);
+
+          // Berechne den prozentual verfügbaren Anteil
+          const ratio = available / startQuantity;
+
+          // Farbliche Anpassung nur für die lose Zahl, basierend auf dem Anteil:
+          if (ratio >= 0.75) {
+            availableSpan.style.color = "green";  // 75% oder mehr verfügbar
+          } else if (ratio >= 0.5) {
+            availableSpan.style.color = "yellow"; // 50% bis 75%
+          } else if (ratio >= 0.25) {
+            availableSpan.style.color = "orange"; // 25% bis 50%
+          } else {
+            availableSpan.style.color = "red";    // unter 25%
+          }
+        }
+      }
+
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navbar = document.querySelector('.navbar');
+
+        menuToggle.addEventListener('click', function() {
+            navbar.classList.toggle('active');
+        });
+      });
+</script>
+
+</body>
+</html>
+

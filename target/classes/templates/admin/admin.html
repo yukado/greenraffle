@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>GR Admin DashBoard</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Chart.js einbinden -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<!-- Header und Navigation -->
+<header>
+    <nav class="navbar" xmlns:th="http://www.w3.org/1999/xhtml">
+        <!-- Linkes Element: Logo -->
+        <div class="logo">
+            <a th:href="@{/admin/index}">Green Raffle</a>
+        </div>
+        <!-- Menü-Button, der nur auf kleinen Bildschirmen sichtbar ist -->
+        <button class="menu-toggle" aria-label="Menü ein-/ausblenden">☰</button>
+        <!-- Rechtes Element: Navigation -->
+        <ul class="menu">
+            <li><a th:href="@{/admin/a_index}" th:text="#{menu.home}">Home</a></li>
+            <li><a th:href="@{/admin/admin}">DashBoard</a></li>
+            <li class="dropdown"><a href="javascript:void(0)" th:text="#{menu.verlosungen}">Verlosungen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/admin/a_raffles}" th:text="#{menu.laufend}">Laufend</a>
+                    <a th:href="@{/admin/a_finished}" th:text="#{menu.beendet}">Beendet</a>
+                    <a th:href="@{/admin/a_winnerstable}" th:text="#{menu.gewinner}">Gewinner</a>
+                </div>
+            </li>
+            <li><a th:href="@{/admin/a_about}" th:text="#{menu.ueberuns}">Über uns</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="${userName}">UserName</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/account}" th:text="#{menu.profil}">Account</a>
+                    <a th:href="@{/user/raffles_u}" th:text="#{menu.myraffles}">Meine Lose</a>
+                    <a th:href="@{/admin/createticket}">Los erstellen</a>
+                    <a th:href="@{/admin/registration_a}">User Neu</a>
+                    <a th:href="@{/admin/a_users}">UserList</a>
+                    <a th:href="@{/admin/create_w}">Gewinner bestimmen</a>
+                    <a th:href="@{/logout}" th:text="#{menu.logout}">Logout</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="#{menu.sprachen}">Sprachen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/admin/?lang=de}">DE</a>
+                    <a th:href="@{/admin/?lang=en}">EN</a>
+                    <a th:href="@{/admin/?lang=es}">ES</a>
+                    <a th:href="@{/admin/?lang=fr}">FR</a>
+                    <a th:href="@{/admin/?lang=it}">IT</a>
+                    <a th:href="@{/admin/?lang=tr}">TR</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<!-- Statistik-Bereich -->
+<section class="statistics">
+    <div class="stat-grid">
+        <!-- Hier die Statistik-Container, wie im vorherigen Beispiel -->
+        <div class="stat-item">
+            <h2>Ticket-Verkäufe (24 Std.)</h2>
+            <canvas id="chart24h" width="400" height="400"></canvas>
+        </div>
+        <div class="stat-item">
+            <h2>Ticket-Verkäufe (Letzte Woche)</h2>
+            <canvas id="chartWeek" width="400" height="400"></canvas>
+        </div>
+        <div class="stat-item">
+            <h2>Ticket-Verkäufe (Letzter Monat)</h2>
+            <canvas id="chartMonth" width="400" height="400"></canvas>
+        </div>
+        <div class="stat-item">
+            <h2>Ticket-Verkäufe (Insgesamt)</h2>
+            <canvas id="chartOverall" width="400" height="400"></canvas>
+        </div>
+    </div>
+</section>
+
+<!-- Liste der Lose, die in den nächsten 5 Stunden enden -->
+<section class="upcoming-tickets">
+    <div class="container">
+        <h2>Lose, die in den nächsten 5 Stunden enden</h2>
+        <ul>
+            <li th:each="ticket : ${upcomingTickets}">
+                <div class="ticket-item">
+                    <h3 th:text="${ticket.cityname + ' ' + ticket.id}">Beispielstadt 001</h3>
+                    <p>
+                        Endet am:
+                        <span th:text="${ticket.enddate}">2025-05-10</span>
+                        um <span th:text="${ticket.endtime}">15:00</span>
+                    </p>
+                    <a th:href="@{|admin/a_ticket/${ticket.id}|}" th:text="'Details anzeigen'"></a>
+                </div>
+            </li>
+        </ul>
+        <p th:if="${#lists.isEmpty(upcomingTickets)}">Keine Lose enden in den nächsten 5 Stunden.</p>
+    </div>
+</section>
+
+<!-- Bereich: Verkaufte Tickets nach Stadt -->
+<section class="sold-tickets">
+    <div class="container">
+        <h2>Verkaufte Tickets nach Stadt</h2>
+        <select id="cityDropdown">
+            <option value="">Alle Städte</option>
+            <!-- Dynamische Optionen aus dem Model -->
+            <option th:each="city : ${cities}" th:value="${city}" th:text="${city}">Beispielstadt</option>
+        </select>
+        <ul id="ticketList">
+            <li th:each="ticket : ${soldTickets}" data-city="${ticket.cityname}">
+                <h3 th:text="${ticket.cityname + ' Ticket ' + ticket.id}">Beispielstadt Ticket 001</h3>
+                <p th:text="'Verkauf am: ' + ${ticket.soldDate}">Verkauf am: 2025-05-10</p>
+            </li>
+        </ul>
+        <p th:if="${#lists.isEmpty(soldTickets)}">Keine verkauften Tickets vorhanden.</p>
+    </div>
+</section>
+
+
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 Green Raffle. Alle Rechte vorbehalten.</p>
+</footer>
+
+<!-- JavaScript zur Initialisierung der Diagramme (Chart.js) -->
+<script>
+    // Beispiel: Diagramm für Ticket-Verkäufe der letzten 24 Std.
+    const ctx24h = document.getElementById('chart24h').getContext('2d');
+    new Chart(ctx24h, {
+      type: 'pie',
+      data: {
+          labels: ['Frankfurt', 'Berlin', 'München', 'Hamburg'], // Beispiel-Städte
+          datasets: [{
+              data: [12, 19, 3, 5],  // Beispielwerte
+              backgroundColor: ['#FF6384','#36A2EB','#FFCE56','#4BC0C0']
+          }]
+      },
+      options: {
+          responsive: true,
+          plugins: {
+              legend: {
+                  display: true,
+                  position: 'bottom'
+              }
+          }
+      }
+    });
+    // Weitere Diagramme (Week, Month, Overall) analog initialisieren...
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navbar = document.querySelector('.navbar');
+
+        menuToggle.addEventListener('click', function() {
+          navbar.classList.toggle('active');
+        });
+      });
+</script>
+</body>
+</html>

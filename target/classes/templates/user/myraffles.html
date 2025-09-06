@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{menu.myraffles}">Meine Lose</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<!-- Header und Navigation -->
+<header>
+    <!-- Hier wird das Fragment Navbar eingebunden -->
+    <!-- Datei: src/main/resources/templates/fragments/navbar.html -->
+    <nav class="navbar" xmlns:th="http://www.w3.org/1999/xhtml">
+        <!-- Linkes Element: Logo -->
+        <div class="logo">
+            <a th:href="@{/user/indexu}">Green Raffle</a>
+        </div>
+        <!-- Menü-Button, der nur auf kleinen Bildschirmen sichtbar ist -->
+        <button class="menu-toggle" aria-label="Menü ein-/ausblenden">☰</button>
+        <!-- Rechtes Element: Navigation -->
+        <ul class="menu">
+            <li><a th:href="@{/user/indexu}" th:text="#{menu.home}">Home</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" th:text="#{menu.verlosungen}">Verlosungen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/raffles_u}" th:text="#{menu.laufend}">Laufend</a>
+                    <a th:href="@{/user/finished_u}" th:text="#{menu.beendet}">Beendet</a>
+                    <a th:href="@{/user/winnerstable_u}" th:text="#{menu.gewinner}">Gewinner</a>
+                </div>
+            </li>
+            <li><a th:href="@{/user/about_u}" th:text="#{menu.ueberuns}">Über uns</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="${userName}">UserName</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/account}" th:text="#{menu.profil}">Account</a>
+                    <a th:href="@{/user/myraffles}" th:text="#{menu.myraffles}">Meine Lose</a>
+                    <a th:href="@{/logout}" th:text="#{menu.logout}">Logout</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="#{menu.sprachen}">Sprachen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/indexu(lang=de)}">DE</a>
+                    <a th:href="@{/user/indexu(lang=en)}">EN</a>
+                    <a th:href="@{/user/indexu(lang=es)}">ES</a>
+                    <a th:href="@{/user/indexu(lang=fr)}">FR</a>
+                    <a th:href="@{/user/indexu(lang=it)}">IT</a>
+                    <a th:href="@{/user/indexu(lang=tr)}">TR</a>
+                </div>
+            </li>
+            <li><a th:href="@{/user/cart}" th:text="#{menu.cart}">Warenkorb</a></li>
+        </ul>
+    </nav>
+</header>
+
+<!-- Hauptinhalt -->
+<main>
+    <section class="lottery-tickets-section">
+        <h1 th:text="#{tickets.aktuelle_verlosungen}">Aktuelle Verlosungen</h1>
+        <div class="ticket-list">
+            <ul>
+                <li th:each="ticketData : ${ticketData}" th:if="${ticketData.remainingSeconds > 0}">
+                    <!-- Ticket-Informationen -->
+                    <h2 th:text="${ticketData.ticket.cityname + ' ' + ticketData.ticket.id + (ticketData.ticket.limmit ? ' limited' : '') + ' Gewinnsumme: ' + ticketData.ticket.winamount}"></h2>
+                    <!-- Countdown-Anzeige -->
+                    <h3 class="countdown" th:attr="data-seconds=${ticketData.remainingSeconds}">
+                        Countdown wird geladen...
+                    </h3>
+                    <!-- Ticketbestand -->
+                    <h3 id="ticketQuantity" data-quantity="${ticketData.ticket.quantity}"
+                        data-startquantity="${ticketData.ticket.startquantity}">
+                        Verfügbare Tickets:
+                        <span th:text="${ticketData.ticket.quantity}">10</span> von
+                        <span th:text="${ticketData.ticket.startquantity}">20</span>
+                    </h3>
+                    <!-- Preis -->
+                    <h3 th:text="${ticketData.ticket.price}">
+                        Preis:
+                        <span th:text="${ticketData.ticket.price} + ' '"></span>
+                        €
+                    </h3>
+                    <!-- Start- & Endzeiten -->
+                    <p th:text="${(ticketData.ticket.startDateTime != null ? #temporals.format(ticketData.ticket.startDateTime, 'dd.MM.yyyy HH:mm') : 'n/a') + ' ' + (ticketData.ticket.endDateTime != null ? #temporals.format(ticketData.ticket.endDateTime, 'dd.MM.yyyy HH:mm') : 'n/a')}"></p>
+                    <!-- Beschreibung -->
+                    <p th:text="#{ticket.winchance(${ticketData.ticket.description})}">Gewinnchancen: </p>
+                    <!-- Link zu den Ticketdetails -->
+                    <a th:href="@{|/ticket/${ticketData.ticket.id}|}" th:text="#{ticket.details}">Details</a>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+</main>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 Green Raffle. Alle Rechte vorbehalten.</p>
+</footer>
+<script th:inline="javascript">
+    // Hole das Countdown-Element und dessen Endzeit
+    const countdownElement = document.getElementById('countdown');
+    const endTimeString = countdownElement.getAttribute('data-endtime');
+    const endDate = new Date(endTimeString);
+
+    // Überprüfe, ob das Datum gültig ist
+    if (isNaN(endDate)) {
+      countdownElement.innerText = "Ungültiges Enddatum";
+    } else {
+      // Aktualisiere den Countdown jede Sekunde
+      const interval = setInterval(() => {
+        const now = new Date();
+        const diff = endDate - now;
+
+        // Falls der Countdown abgelaufen ist
+        if (diff <= 0) {
+          clearInterval(interval);
+          countdownElement.innerText = "Countdown abgelaufen";
+          return;
+        }
+
+        // Berechne die einzelnen Zeitkomponenten
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        // Stelle den Countdown-Text zusammen
+        countdownElement.innerText = days + " Tage " + hours + " Stunden " +
+                                     minutes + " Minuten " + seconds + " Sekunden";
+      }, 1000);
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navbar = document.querySelector('.navbar');
+
+        menuToggle.addEventListener('click', function() {
+            navbar.classList.toggle('active');
+        });
+      });
+</script>
+</body>
+</html>

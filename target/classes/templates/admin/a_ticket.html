@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{title.ticket}">GR Admin Ticket</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Chart.js einbinden -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<style>
+    .ticket-details-section {
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* Container, der die Ticketkarten in einem flexiblen Grid anordnet */
+    .ticket-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;           /* Abstand zwischen den Karten */
+      max-width: 1200px;    /* Breite des Containers – passt für maximal 2 Tickets nebeneinander */
+      width: 100%;
+    }
+
+    /* Einzelne Ticketkarte */
+   .ticket-card {
+  background-color: #fff;
+  border: 2px solid transparent; /* Standardmäßig kein sichtbarer Rahmen */
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  cursor: pointer; /* Deutet an, dass das Element interaktiv ist */
+  }
+
+  .ticket-card:hover {
+  transform: translateY(-5px); /* Leichte Aufwärtsbewegung */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border-color: #007BFF; /* Blauer Rahmen beim Hover für mehr Sichtbarkeit */
+  }
+
+
+    /* Header-Bereich der Ticketkarte */
+    .ticket-header {
+      border-bottom: 1px solid #e0e0de;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+    }
+
+    .ticket-header h2 {
+      font-size: 1.2em;
+      margin: 0;
+    }
+
+    /* Body-Bereich der Ticketkarte */
+    .ticket-body {
+      font-size: 0.95em;
+      line-height: 1.4em;
+      margin-bottom: 15px;
+    }
+
+    .ticket-detail {
+      margin: 5px 0;
+    }
+
+    /* Footer-Bereich, z. B. für den "Details"-Link */
+    .ticket-footer {
+      text-align: right;
+    }
+
+    .ticket-footer a {
+      color: #007BFF;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    /* Auf kleineren Bildschirmen: Eine Karte pro Zeile */
+    @media (max-width: 768px) {
+      .ticket-card {
+        flex: 0 0 calc(100% - 20px);
+      }
+    }
+</style>
+<body>
+<!-- Header und Navigation -->
+<header>
+    <nav class="navbar" xmlns:th="http://www.w3.org/1999/xhtml">
+        <!-- Linkes Element: Logo -->
+        <div class="logo">
+            <a th:href="@{/admin/index}">Green Raffle</a>
+        </div>
+        <!-- Menü-Button, der nur auf kleinen Bildschirmen sichtbar ist -->
+        <button class="menu-toggle" aria-label="Menü ein-/ausblenden">☰</button>
+        <!-- Rechtes Element: Navigation -->
+        <ul class="menu">
+            <li><a th:href="@{/admin/a_index}" th:text="#{menu.home}">Home</a></li>
+            <li><a th:href="@{/admin/admin}">DashBoard</a></li>
+            <li class="dropdown"><a href="javascript:void(0)" th:text="#{menu.verlosungen}">Verlosungen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/admin/a_raffles}" th:text="#{menu.laufend}">Laufend</a>
+                    <a th:href="@{/admin/a_finished}" th:text="#{menu.beendet}">Beendet</a>
+                    <a th:href="@{/admin/a_winnerstable}" th:text="#{menu.gewinner}">Gewinner</a>
+                </div>
+            </li>
+            <li><a th:href="@{/admin/a_about}" th:text="#{menu.ueberuns}">Über uns</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="${userName}">UserName</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/account}" th:text="#{menu.profil}">Account</a>
+                    <a th:href="@{/user/raffles_u}" th:text="#{menu.myraffles}">Meine Lose</a>
+                    <a th:href="@{/admin/createticket}">Los erstellen</a>
+                    <a th:href="@{/admin/registration_a}">User Neu</a>
+                    <a th:href="@{/admin/a_users}">UserList</a>
+                    <a th:href="@{/admin/create_w}">Gewinner bestimmen</a>
+                    <a th:href="@{/logout}" th:text="#{menu.logout}">Logout</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="#{menu.sprachen}">Sprachen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/admin/?lang=de}">DE</a>
+                    <a th:href="@{/admin/?lang=en}">EN</a>
+                    <a th:href="@{/admin/?lang=es}">ES</a>
+                    <a th:href="@{/admin/?lang=fr}">FR</a>
+                    <a th:href="@{/admin/?lang=it}">IT</a>
+                    <a th:href="@{/admin/?lang=tr}">TR</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</header>
+<!-- Hauptinhalt: Details des Loses/Tickets -->
+<main>
+    <section class="ticket-details-section">
+        <div class="ticket-card">
+
+            <!-- Header-Bereich der Ticketkarte -->
+            <div class="ticket-header">
+                <h2 th:text="${ticketData.ticket.cityname + ' ' + ticketData.ticket.id + (ticketData.ticket.limmit ? ' limited' : '') + ' Gewinnsumme: ' + ticketData.ticket.winamount}">
+                    Ticket Titel
+                </h2>
+            </div>
+
+            <!-- Body-Bereich der Ticketkarte -->
+            <div class="ticket-body">
+                <p th:text="#{ticket.schedule(
+              ${ticketData.ticket.startDateTime != null ? #temporals.format(ticketData.ticket.startDateTime, 'dd.MM.yyyy HH:mm') : 'n/a'},
+              ${ticketData.ticket.endDateTime != null ? #temporals.format(ticketData.ticket.endDateTime, 'dd.MM.yyyy HH:mm') : 'n/a'}
+           )}">
+                    Default Text
+                </p>
+                <h3 th:text="#{ticket.remaining}">Verbleibende Zeit:</h3>
+                <!-- Countdown-Anzeige -->
+                <h3 class="countdown" th:attr="data-seconds=${ticketData.remainingSeconds}">
+                    Countdown wird geladen...
+                </h3>
+                <!-- Ausgabe des Ticketbestandes -->
+                <h3 id="ticketQuantity"
+                    data-quantity="${ticketData.ticket.quantity}"
+                    data-startquantity="${ticketData.ticket.startquantity}"
+                    th:text="#{ticket.available(${ticketData.ticket.quantity}, ${ticketData.ticket.startquantity})}">
+                    Verfügbare Lose:
+                    <span th:text="${ticketData.ticket.quantity}">10</span>
+                    von
+                    <span th:text="${ticketData.ticket.startquantity}">20</span>
+                </h3>
+                <h3>
+                    <span th:text="#{ticket.price}">Preis:</span>
+                    <span th:text="${ticketData.ticket.price}"></span>
+                    <span> €</span>
+                </h3>
+                <p th:text="#{ticket.winchance(${ticketData.ticket.description})}">Gewinnchancen:</p>
+            </div>
+
+            <!-- Footer-Bereich, z. B. für den "Details"-Link -->
+            <div class="ticket-footer">
+                <a th:href="@{/login}" th:text="#{ticket.mitglied}">Details</a>
+            </div>
+
+            <!-- Footer-Bereich, z. B. für den "Details"-Link -->
+            <div class="ticket-footer">
+                <!-- Zum Warenkorb hinzufügen -->
+                <form th:object="${cartDto}" th:action="@{/user/addtocart}" method="post">
+                    <label>
+                        <input type="hidden" th:field="*{userId}" th:value="${userId}">
+                    </label>
+                    <label>
+                        <input type="hidden" th:field="*{userName}" th:value="${userName}">
+                    </label>
+                    <label>
+                        <input type="hidden" th:field="*{ticketCity}" th:value="${ticketData.ticket.cityname}">
+                    </label>
+                    <label>
+                        <input type="hidden" th:field="*{raffleId}" th:value="${ticketData.ticket.id}">
+                    </label>
+                    <label>
+                        <input type="hidden" th:field="*{price}" th:value="${ticketData.ticket.price}">
+                    </label>
+                    <label>
+                        <input type="hidden" th:field="*{winamount}" th:value="${ticketData.ticket.winamount}">
+                    </label>
+                    <label>
+                        <input th:field="*{quantity}" th:value="${quantity}" placeholder="0">
+                    </label>
+                    <label>
+                        <input type="hidden" th:field="*{startDateTime}" th:value="${ticketData.ticket.startDateTime}">
+                    </label>
+                    <!-- Achte auch hier auf korrekte Feldnamen und Werte -->
+                    <label>
+                        <input type="hidden" th:field="*{endDateTime}" th:value="${ticketData.ticket.endDateTime}">
+                    </label>
+                    <label>
+                        <input type="hidden" th:field="*{description}" th:value="${ticketData.ticket.description}">
+                    </label>
+                    <button type="submit">Kaufen</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 Green Raffle. Alle Rechte vorbehalten.</p>
+</footer>
+
+<script th:inline="javascript">
+    // Warte bis der DOM vollständig geladen ist
+    document.addEventListener("DOMContentLoaded", function() {
+      // Alle Countdown-Elemente auswählen
+      const countdownElements = document.querySelectorAll('.countdown');
+
+      countdownElements.forEach(function(countdownElement) {
+        let remainingSeconds = parseInt(countdownElement.getAttribute('data-seconds'), 10);
+
+        function updateCountdown() {
+          if (remainingSeconds <= 0) {
+            countdownElement.textContent = "Countdown abgelaufen";
+            return;
+          }
+
+          // Umrechnung in Tage, Stunden, Minuten und Sekunden
+          const days = Math.floor(remainingSeconds / 86400);
+          const hours = Math.floor((remainingSeconds % 86400) / 3600);
+          const minutes = Math.floor((remainingSeconds % 3600) / 60);
+          const seconds = remainingSeconds % 60;
+
+          countdownElement.textContent =
+            days + " Tage " +
+            hours + " Stunden " +
+            minutes + " Minuten " +
+            seconds + " Sekunden";
+
+          // Dynamische Farbänderung des Countdowns:
+          // Je nach verbleibender Zeit wechselt die Farbe von weiß zu gelb, orange und dann rot.
+          if (remainingSeconds > 1800) {
+            countdownElement.style.color = "white"; // mehr als 50% der Zeit übrig
+          } else if (remainingSeconds <= 1800 && remainingSeconds > 600) {
+            countdownElement.style.color = "yellow";
+          } else if (remainingSeconds <= 600 && remainingSeconds > 300) {
+            countdownElement.style.color = "orange";
+          } else {
+            countdownElement.style.color = "red";
+          }
+
+          remainingSeconds--; // Sekunden rückwärts zählen
+        }
+
+        updateCountdown(); // Initialer Aufruf
+        setInterval(updateCountdown, 1000);
+      });
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuToggle = document.querySelector('.menu-toggle');
+      const navbar = document.querySelector('.navbar');
+
+      menuToggle.addEventListener('click', function() {
+        navbar.classList.toggle('active');
+      });
+    });
+</script>
+
+</body>
+</html>

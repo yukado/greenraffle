@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Green Raffle</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<style>
+    footer {
+        text-align: center;
+        padding: 2rem;
+        background: #222;
+        color: #ccc;
+        font-size: 0.9rem;
+        margin-top: 3rem;
+        border-top: 5px solid #28a745;
+    }
+
+    footer a {
+        color: #aaffaa;
+        text-decoration: none;
+    }
+
+    footer a:hover {
+        color: white;
+    }
+</style>
+<body>
+<!-- Header und Navigation -->
+<header>
+    <nav class="navbar" xmlns:th="http://www.w3.org/1999/xhtml">
+        <div class="logo">
+            <a th:href="@{/}">Green Raffle</a>
+        </div>
+        <!-- Menü-Button, der nur auf kleinen Bildschirmen sichtbar ist -->
+        <button class="menu-toggle" aria-label="Menü ein-/ausblenden">☰</button>
+        <ul class="menu">
+            <li><a th:href="@{/}" th:text="#{menu.home}">Home</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn"  th:text="#{menu.verlosungen}">Verlosungen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/raffles}" th:text="#{menu.laufend}">Laufende Verlosungen</a>
+                    <a th:href="@{/finished}" th:text="#{menu.beendet}">Beendet</a>
+                    <a th:href="@{/winnerstable}" th:text="#{menu.gewinner}">Gewinner</a>
+                </div>
+            </li>
+            <li><a th:href="@{/about}" th:text="#{menu.ueberuns}">Über uns</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="#{menu.sprachen}">Sprachen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/?lang=de}">DE</a>
+                    <a th:href="@{/?lang=en}">EN</a>
+                    <a th:href="@{/?lang=es}">ES</a>
+                    <a th:href="@{/?lang=fr}">FR</a>
+                    <a th:href="@{/?lang=it}">IT</a>
+                    <a th:href="@{/?lang=tr}">TR</a>
+                </div>
+            </li>
+            <li><a th:href="@{/login}"  th:text="#{menu.logreg}">Login/Registrieren</a></li>
+        </ul>
+    </nav>
+</header>
+<!-- Hauptinhalt -->
+<main>
+    <section class="lottery-tickets-section">
+        <h1 th:text="#{winner.gewinnertabelle}">Unsere Gewinner</h1>
+        <div class="ticket-list">
+            <table>
+                <thead>
+                <tr>
+                    <th th:text="#{gewinner.userid}">User ID</th>
+                    <!-- RaffleId -->
+                    <th th:text="#{gewinner.ticketid}">Ticket ID</th>
+                    <!-- LosNr. -->
+                    <th th:text="#{gewinner.winnerticket}">Ticket ID</th>
+                    <th th:text="#{gewinner.stadt}">Stadt</th>
+                    <th th:text="#{gewinner.land}">Land</th>
+                    <th th:text="#{gewinner.datum}">Datum</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="winner : ${winners}">
+                    <td th:text="${'U' + winner.userId}"></td>
+                    <td th:text="${winner.ticketId}"></td>
+                    <td th:text="${winner.winnerTicket}"></td>
+                    <td th:text="${winner.ticketCity}"></td>
+                    <td th:text="${winner.country}"></td>
+                    <td th:text="${winner.date}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 Green Raffle. Alle Rechte vorbehalten.</p>
+</footer>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navbar = document.querySelector('.navbar');
+
+        menuToggle.addEventListener('click', function() {
+          navbar.classList.toggle('active');
+        });
+      });
+</script>
+</body>
+</html>

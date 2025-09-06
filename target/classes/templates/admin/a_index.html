@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>GR Admin Index</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Chart.js einbinden -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<!-- Header und Navigation -->
+<header>
+    <nav class="navbar" xmlns:th="http://www.w3.org/1999/xhtml">
+        <!-- Linkes Element: Logo -->
+        <div class="logo">
+            <a th:href="@{/admin/index}">Green Raffle</a>
+        </div>
+        <!-- Menü-Button, der nur auf kleinen Bildschirmen sichtbar ist -->
+        <button class="menu-toggle" aria-label="Menü ein-/ausblenden">☰</button>
+        <!-- Rechtes Element: Navigation -->
+        <ul class="menu">
+            <li><a th:href="@{/admin/a_index}" th:text="#{menu.home}">Home</a></li>
+            <li><a th:href="@{/admin/admin}">DashBoard</a></li>
+            <li class="dropdown"><a href="javascript:void(0)" th:text="#{menu.verlosungen}">Verlosungen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/admin/a_raffles}" th:text="#{menu.laufend}">Laufend</a>
+                    <a th:href="@{/admin/a_finished}" th:text="#{menu.beendet}">Beendet</a>
+                    <a th:href="@{/admin/a_winnerstable}" th:text="#{menu.gewinner}">Gewinner</a>
+                </div>
+            </li>
+            <li><a th:href="@{/admin/a_about}" th:text="#{menu.ueberuns}">Über uns</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="${userName}">UserName</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/account}" th:text="#{menu.profil}">Account</a>
+                    <a th:href="@{/user/raffles_u}" th:text="#{menu.myraffles}">Meine Lose</a>
+                    <a th:href="@{/admin/createticket}">Los erstellen</a>
+                    <a th:href="@{/admin/registration_a}">User Neu</a>
+                    <a th:href="@{/admin/a_users}">UserList</a>
+                    <a th:href="@{/admin/create_w}">Gewinner bestimmen</a>
+                    <a th:href="@{/logout}" th:text="#{menu.logout}">Logout</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="#{menu.sprachen}">Sprachen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/admin/?lang=de}">DE</a>
+                    <a th:href="@{/admin/?lang=en}">EN</a>
+                    <a th:href="@{/admin/?lang=es}">ES</a>
+                    <a th:href="@{/admin/?lang=fr}">FR</a>
+                    <a th:href="@{/admin/?lang=it}">IT</a>
+                    <a th:href="@{/admin/?lang=tr}">TR</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</header>
+<!-- Banner Slider -->
+<section class="slider">
+    <div class="slide active">
+        <img th:src="@{'/images/banner1_' + ${#locale.language} + '.svg'}" th:alt="#{banner1.alt}" />
+        <div class="caption" th:text="#{banner1.text}">Unterstütze Klimaprojekte mit Green Raffle.</div>
+    </div>
+    <div class="slide">
+        <img th:src="@{'/images/banner2_' + ${#locale.language} + '.svg'}" th:alt="#{banner2.alt}" />
+        <div class="caption" th:text="#{banner2.text}">Mitmachen &amp; gewinnen – für eine grünere Zukunft.</div>
+    </div>
+    <div class="slide">
+        <img th:src="@{'/images/banner3_' + ${#locale.language} + '.svg'}" th:alt="#{banner3.alt}" />
+        <div class="caption" th:text="#{banner3.text}">Jeder Loskauf zählt. Klima schützen, Zukunft sichern.</div>
+    </div>
+
+    <div class="slider-nav">
+        <span class="prev">&#10094;</span>
+        <span class="next">&#10095;</span>
+    </div>
+</section>
+
+<!-- Content Bereich -->
+<section class="content">
+    <h1 th:text="#{welcome.message}">Willkommen bei Green Raffle</h1>
+    <p th:text="#{info.message}">Mit jeder Teilnahme wird ein Teil des Erlöses an Klimaprojekte gespendet. Vielen Dank, dass du mitmachst!</p>
+</section>
+
+<!-- JavaScript für den Slider -->
+<script th:inline="javascript">
+    let slideIndex = 0;
+    const slides = document.querySelectorAll('.slide');
+    const prev = document.querySelector('.prev');
+    const next = document.querySelector('.next');
+
+    function showSlide(index) {
+        if (index >= slides.length) {
+            slideIndex = 0;
+        } else if (index < 0) {
+            slideIndex = slides.length - 1;
+        } else {
+            slideIndex = index;
+        }
+        slides.forEach((slide, idx) => {
+            slide.classList.remove('active');
+            if (idx === slideIndex) {
+                slide.classList.add('active');
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        showSlide(slideIndex);
+        setInterval(() => {
+            slideIndex++;
+            showSlide(slideIndex);
+        }, 5000); // Wechsel alle 5 Sekunden
+    });
+
+    prev.addEventListener('click', () => {
+        slideIndex--;
+        showSlide(slideIndex);
+    });
+
+    next.addEventListener('click', () => {
+        slideIndex++;
+        showSlide(slideIndex);
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuToggle = document.querySelector('.menu-toggle');
+      const navbar = document.querySelector('.navbar');
+
+      menuToggle.addEventListener('click', function() {
+        navbar.classList.toggle('active');
+      });
+    });
+</script>
+</body>
+</html>

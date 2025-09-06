@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>GR Admin About</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Chart.js einbinden -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<!-- Header und Navigation -->
+<header>
+    <nav class="navbar" xmlns:th="http://www.w3.org/1999/xhtml">
+        <!-- Linkes Element: Logo -->
+        <div class="logo">
+            <a th:href="@{/admin/index}">Green Raffle</a>
+        </div>
+        <!-- Menü-Button, der nur auf kleinen Bildschirmen sichtbar ist -->
+        <button class="menu-toggle" aria-label="Menü ein-/ausblenden">☰</button>
+        <!-- Rechtes Element: Navigation -->
+        <ul class="menu">
+            <li><a th:href="@{/admin/a_index}" th:text="#{menu.home}">Home</a></li>
+            <li><a th:href="@{/admin/admin}">DashBoard</a></li>
+            <li class="dropdown"><a href="javascript:void(0)" th:text="#{menu.verlosungen}">Verlosungen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/admin/a_raffles}" th:text="#{menu.laufend}">Laufend</a>
+                    <a th:href="@{/admin/a_finished}" th:text="#{menu.beendet}">Beendet</a>
+                    <a th:href="@{/admin/a_winnerstable}" th:text="#{menu.gewinner}">Gewinner</a>
+                </div>
+            </li>
+            <li><a th:href="@{/admin/a_about}" th:text="#{menu.ueberuns}">Über uns</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="${userName}">UserName</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/account(id=${user.id})}" th:text="#{menu.profil}">Account</a>
+                    <a th:href="@{/user/raffles_u}" th:text="#{menu.myraffles}">Meine Lose</a>
+                    <a th:href="@{/admin/createticket}">Los erstellen</a>
+                    <a th:href="@{/admin/buy}">Admin kauft</a>
+                    <a th:href="@{/admin/registration_a}">User Neu</a>
+                    <a th:href="@{/admin/a_users}">UserList</a>
+                    <a th:href="@{/admin/create_w}">Gewinner bestimmen</a>
+                    <a th:href="@{/logout}" th:text="#{menu.logout}">Logout</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="#{menu.sprachen}">Sprachen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/admin/?lang=de}">DE</a>
+                    <a th:href="@{/admin/?lang=en}">EN</a>
+                    <a th:href="@{/admin/?lang=es}">ES</a>
+                    <a th:href="@{/admin/?lang=fr}">FR</a>
+                    <a th:href="@{/admin/?lang=it}">IT</a>
+                    <a th:href="@{/admin/?lang=tr}">TR</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</header>
+<div class="container py-4">
+
+    <!-- Mission -->
+    <section>
+        <h2 th:text="#{about.mission_title}">Unsere Mission</h2>
+        <p th:text="#{about.mission_text}">
+            Wir fördern Klimaschutzprojekte weltweit – finanziert durch Spenden, nicht durch Losverkäufe.
+        </p>
+    </section>
+
+    <!-- Hilfe -->
+    <section>
+        <h2 th:text="#{about.how_help_title}">Wie kannst du helfen?</h2>
+        <ul class="list-group">
+            <li class="list-group-item" th:text="#{about.help_1}">Spende für Umweltprojekte</li>
+            <li class="list-group-item" th:text="#{about.help_2}">Mach aktiv bei lokalen Projekten mit</li>
+            <li class="list-group-item" th:text="#{about.help_3}">Werde Teil der Community & bring Ideen ein</li>
+        </ul>
+    </section>
+
+    <!-- Vision -->
+    <section>
+        <h2 th:text="#{about.vision_title}">Unsere Vision</h2>
+        <p th:text="#{about.vision_text}">
+            Eine nachhaltige Welt durch gemeinschaftliches Handeln und neue Wege der Finanzierung.
+        </p>
+    </section>
+
+    <!-- Ablauf -->
+    <section>
+        <h2 th:text="#{about.how_it_works_title}">So funktioniert’s</h2>
+        <ul class="list-group">
+            <li class="list-group-item" th:text="#{about.works_1}">
+                Jede Ziehung trägt den Namen einer Stadt und eine Nummer – z. B. 100 Lose à 100 € für 10.000 € Gewinn.
+            </li>
+            <li class="list-group-item" th:text="#{about.works_2}">
+                Wenn nicht alle Lose verkauft werden, startet ein Countdown – danach wird unter den verkauften Losen gezogen.
+            </li>
+            <li class="list-group-item" th:text="#{about.works_3}">
+                100 % der Loseinnahmen werden ausgeschüttet. Es gibt keine Abzüge oder Gebühren.
+            </li>
+        </ul>
+    </section>
+
+    <!-- Beispiel -->
+    <section>
+        <h2 th:text="#{about.example_title}">Beispiel</h2>
+        <p th:text="#{about.example_text}">
+            Max kauft 3 Lose und gewinnt 10.000 € – das Geld landet direkt auf seinem Konto. 🎉
+        </p>
+    </section>
+
+    <!-- Spenden -->
+    <section>
+        <h2 th:text="#{about.spenden_title}">Spenden & Freilose</h2>
+        <p th:text="#{about.spenden_text}">
+            Jeden Monat veröffentlichen wir alle Spenden. Wer aktiv mitmacht, kann Freilose erhalten!
+        </p>
+    </section>
+
+    <!-- Mitgliedschaft -->
+    <section>
+        <h2 th:text="#{about.mitglied_title}">Mitglied werden</h2>
+        <p th:text="#{about.mitglied_text}">
+            Kostenlos, ohne Abo, jederzeit kündbar. Du kannst auch spenden, ohne Mitglied zu sein.
+        </p>
+    </section>
+
+</div>
+
+<!-- Footer -->
+<footer class="text-center py-3 bg-dark text-white">
+    <p th:text="#{follow_us}">Folge uns auf Social Media</p>
+    <p>&copy; 2025 <span th:text="#{brand}">Green Raffle</span> – <span th:text="#{rights_reserved}">Alle Rechte vorbehalten</span>.</p>
+</footer>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navbar = document.querySelector('.navbar');
+
+        menuToggle.addEventListener('click', function() {
+          navbar.classList.toggle('active');
+        });
+      });
+</script>
+</body>
+</html>
