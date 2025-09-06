@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="#{title.about}">GR Über uns</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<style>
+
+
+  /* Hauptinhalt */
+  .container {
+      max-width: 900px;
+      margin: auto;
+  }
+  h2 {
+      color: #28a745;
+      margin-top: 40px;
+  }
+  .list-group-item {
+      border: none;
+      background: #e6ffe6;
+      font-size: 1.1rem;
+  }
+
+  /* Tabellen */
+  table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      background: white;
+  }
+  th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+  }
+  th {
+      background: #28a745;
+      color: white;
+  }
+  td {
+      background: #f9f9f9;
+  }
+
+  /* Animierter Live-Ticker */
+  .live-ticker {
+      font-size: 1.2rem;
+      background: #28a745;
+      color: white;
+      padding: 10px;
+      text-align: center;
+      overflow: hidden;
+      white-space: nowrap;
+  }
+  .live-ticker span {
+      display: inline-block;
+      padding-left: 100%;
+      animation: ticker 15s linear infinite;
+  }
+  @keyframes ticker {
+      from { transform: translateX(0); }
+      to { transform: translateX(-100%); }
+  }
+
+  /* Buttons */
+  .btn-success {
+      background: #28a745;
+      border: none;
+  }
+  .btn-success:hover {
+      background: #218838;
+  }
+
+  /* Footer */
+  footer {
+      text-align: center;
+      padding: 20px;
+      background: #222;
+      color: white;
+  }
+  footer a {
+      color: #ddd;
+      text-decoration: none;
+  }
+  footer a:hover {
+      color: #fff;
+  }
+</style>
+<body>
+<!-- Header und Navigation -->
+<header>
+  <nav class="navbar" xmlns:th="http://www.w3.org/1999/xhtml">
+    <!-- Linkes Element: Logo -->
+    <div class="logo">
+      <a th:href="@{/user/indexu}">Green Raffle</a>
+    </div>
+    <!-- Menü-Button, der nur auf kleinen Bildschirmen sichtbar ist -->
+    <button class="menu-toggle" aria-label="Menü ein-/ausblenden">☰</button>
+    <!-- Rechtes Element: Navigation -->
+    <ul class="menu">
+      <li><a th:href="@{/user/indexu}" th:text="#{menu.home}">Home</a></li>
+      <li class="dropdown">
+        <a href="javascript:void(0)" th:text="#{menu.verlosungen}">Verlosungen</a>
+        <div class="dropdown-content">
+          <a th:href="@{/user/raffles_u}" th:text="#{menu.laufend}">Laufend</a>
+          <a th:href="@{/user/finished_u}" th:text="#{menu.beendet}">Beendet</a>
+          <a th:href="@{/user/winnerstable_u}" th:text="#{menu.gewinner}">Gewinner</a>
+        </div>
+      </li>
+      <li><a th:href="@{/user/about_u}" th:text="#{menu.ueberuns}">Über uns</a></li>
+      <li class="dropdown">
+        <a href="javascript:void(0)" class="dropbtn" th:text="${userName}">UserName</a>
+        <div class="dropdown-content">
+          <a th:href="@{/user/account}" th:text="#{menu.profil}">Account</a>
+          <a th:href="@{/user/myraffles}" th:text="#{menu.myraffles}">Meine Lose</a>
+          <a th:href="@{/logout}" th:text="#{menu.logout}">Logout</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="javascript:void(0)" class="dropbtn" th:text="#{menu.sprachen}">Sprachen</a>
+        <div class="dropdown-content">
+          <a th:href="@{/user/indexu(lang=de)}">DE</a>
+          <a th:href="@{/user/indexu(lang=en)}">EN</a>
+          <a th:href="@{/user/indexu(lang=es)}">ES</a>
+          <a th:href="@{/user/indexu(lang=fr)}">FR</a>
+          <a th:href="@{/user/indexu(lang=it)}">IT</a>
+          <a th:href="@{/user/indexu(lang=tr)}">TR</a>
+        </div>
+      </li>
+      <li><a th:href="@{/user/cart}" th:text="#{menu.cart}">Warenkorb</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="container py-4">
+
+  <!-- Mission -->
+  <section>
+    <h2 th:text="#{about.mission_title}">Unsere Mission</h2>
+    <p th:text="#{about.mission_text}">
+      Wir fördern Klimaschutzprojekte weltweit – finanziert durch Spenden, nicht durch Losverkäufe.
+    </p>
+  </section>
+
+  <!-- Hilfe -->
+  <section>
+    <h2 th:text="#{about.how_help_title}">Wie kannst du helfen?</h2>
+    <ul class="list-group">
+      <li class="list-group-item" th:text="#{about.help_1}">Spende für Umweltprojekte</li>
+      <li class="list-group-item" th:text="#{about.help_2}">Mach aktiv bei lokalen Projekten mit</li>
+      <li class="list-group-item" th:text="#{about.help_3}">Werde Teil der Community & bring Ideen ein</li>
+    </ul>
+  </section>
+
+  <!-- Vision -->
+  <section>
+    <h2 th:text="#{about.vision_title}">Unsere Vision</h2>
+    <p th:text="#{about.vision_text}">
+      Eine nachhaltige Welt durch gemeinschaftliches Handeln und neue Wege der Finanzierung.
+    </p>
+  </section>
+
+  <!-- Ablauf -->
+  <section>
+    <h2 th:text="#{about.how_it_works_title}">So funktioniert’s</h2>
+    <ul class="list-group">
+      <li class="list-group-item" th:text="#{about.works_1}">
+        Jede Ziehung trägt den Namen einer Stadt und eine Nummer – z. B. 100 Lose à 100 € für 10.000 € Gewinn.
+      </li>
+      <li class="list-group-item" th:text="#{about.works_2}">
+        Wenn nicht alle Lose verkauft werden, startet ein Countdown – danach wird unter den verkauften Losen gezogen.
+      </li>
+      <li class="list-group-item" th:text="#{about.works_3}">
+        100 % der Loseinnahmen werden ausgeschüttet. Es gibt keine Abzüge oder Gebühren.
+      </li>
+    </ul>
+  </section>
+
+  <!-- Beispiel -->
+  <section>
+    <h2 th:text="#{about.example_title}">Beispiel</h2>
+    <p th:text="#{about.example_text}">
+      Max kauft 3 Lose und gewinnt 10.000 € – das Geld landet direkt auf seinem Konto. 🎉
+    </p>
+  </section>
+
+  <!-- Spenden -->
+  <section>
+    <h2 th:text="#{about.spenden_title}">Spenden & Freilose</h2>
+    <p th:text="#{about.spenden_text}">
+      Jeden Monat veröffentlichen wir alle Spenden. Wer aktiv mitmacht, kann Freilose erhalten!
+    </p>
+  </section>
+
+  <!-- Mitgliedschaft -->
+  <section>
+    <h2 th:text="#{about.mitglied_title}">Mitglied werden</h2>
+    <p th:text="#{about.mitglied_text}">
+      Kostenlos, ohne Abo, jederzeit kündbar. Du kannst auch spenden, ohne Mitglied zu sein.
+    </p>
+  </section>
+
+</div>
+
+<!-- Footer -->
+<footer class="text-center py-3 bg-dark text-white">
+  <p th:text="#{follow_us}">Folge uns auf Social Media</p>
+  <p>&copy; 2025 <span th:text="#{brand}">Green Raffle</span> – <span th:text="#{rights_reserved}">Alle Rechte vorbehalten</span>.</p>
+</footer>
+<script th:inline="javascript">
+  document.addEventListener('DOMContentLoaded', function() {
+      const menuToggle = document.querySelector('.menu-toggle');
+      const navbar = document.querySelector('.navbar');
+
+      menuToggle.addEventListener('click', function() {
+        navbar.classList.toggle('active');
+      });
+    });
+</script>
+</body>
+</html>

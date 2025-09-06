@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>GR Admin Create Ticket</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Chart.js einbinden -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<!-- Header und Navigation -->
+<header>
+  <nav class="navbar">
+    <!-- Linkes Element: Logo -->
+    <div class="logo">
+      <a th:href="@{/admin/index}">Green Raffle</a>
+    </div>
+    <!-- Menü-Button, der nur auf kleinen Bildschirmen sichtbar ist -->
+    <button class="menu-toggle" aria-label="Menü ein-/ausblenden">☰</button>
+    <!-- Rechtes Element: Navigation -->
+    <ul class="menu">
+      <li><a th:href="@{/admin/index}" th:text="#{menu.home}">Home</a></li>
+      <li><a th:href="@{/admin/admin}">DashBoard</a></li>
+      <li class="dropdown"><a href="javascript:void(0)" th:text="#{menu.verlosungen}">Verlosungen</a>
+        <div class="dropdown-content">
+          <a th:href="@{/admin/a_raffles}" th:text="#{menu.laufend}">Laufend</a>
+          <a th:href="@{/admin/a_finished}" th:text="#{menu.beendet}">Beendet</a>
+          <a th:href="@{/admin/a_winnerstable}" th:text="#{menu.gewinner}">Gewinner</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="javascript:void(0)" class="dropbtn" th:text="${userName}">UserName</a>
+        <div class="dropdown-content">
+          <a th:href="@{/admin/account}" th:text="#{menu.profil}">Account</a>
+          <a th:href="@{/admin/a_raffles}" th:text="#{menu.myraffles}">Meine Lose</a>
+          <a th:href="@{/admin/createticket}">Los erstellen</a>
+          <a th:href="@{/admin/registration_a}">User Neu</a>
+          <a th:href="@{/admin/a_users}">UserList</a>
+          <a th:href="@{/admin/create_w}">Gewinner bestimmen</a>
+          <a th:href="@{/logout}" th:text="#{menu.logout}">Logout</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="javascript:void(0)" class="dropbtn" th:text="#{menu.sprachen}">Sprachen</a>
+        <div class="dropdown-content">
+          <a th:href="@{/admin/?lang=de}">DE</a>
+          <a th:href="@{/admin/?lang=en}">EN</a>
+          <a th:href="@{/admin/?lang=es}">ES</a>
+          <a th:href="@{/admin/?lang=fr}">FR</a>
+          <a th:href="@{/admin/?lang=it}">IT</a>
+          <a th:href="@{/admin/?lang=tr}">TR</a>
+        </div>
+      </li>
+    </ul>
+  </nav>
+</header>
+<!-- Formular zum Erstellen neuer Tickets/Lose -->
+<section class="ticket-creation">
+  <div class="form-container">
+    <h2>Neues Ticket/Los erstellen</h2>
+    <form th:action="@{/admin/createticket}" th:object="${ticket}" method="post">
+      <div class="form-group">
+        <label for="cityname">Stadtname</label>
+        <input type="text" id="cityname" name="cityname" placeholder="z.B. Frankfurt" required>
+      </div>
+      <div class="form-group">
+        <label for="winamount">Gewinnsumme</label>
+        <input type="text" id="winamount" name="winamount" placeholder="z.B. 500€" required>
+      </div>
+      <div class="form-group">
+        <label for="startDateTime">Startzeit</label>
+        <input type="datetime-local" id="startDateTime" name="startDateTime" required>
+      </div>
+      <div class="form-group">
+        <label for="quantity">Verfügbare Tickets</label>
+        <input type="number" id="quantity" name="quantity" min="1" required>
+      </div>
+      <div class="form-group">
+        <label for="price">Preis</label>
+        <input type="number" id="price" name="price" step="0.01" required>
+      </div>
+      <div class="form-group">
+        <button type="submit">Ticket erstellen</button>
+      </div>
+    </form>
+  </div>
+  <div th:if="${message}" class="alert alert-success">
+    <p th:text="${message}"></p>
+  </div>
+</section>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>GR Admin Users</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Chart.js einbinden -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<!-- Header und Navigation -->
+<header>
+    <nav class="navbar">
+        <!-- Linkes Element: Logo -->
+        <div class="logo">
+            <a th:href="@{/admin/index}">Green Raffle</a>
+        </div>
+        <!-- Menü-Button, der nur auf kleinen Bildschirmen sichtbar ist -->
+        <button class="menu-toggle" aria-label="Menü ein-/ausblenden">☰</button>
+        <!-- Rechtes Element: Navigation -->
+        <ul class="menu">
+            <li><a th:href="@{/admin/a_index}" th:text="#{menu.home}">Home</a></li>
+            <li><a th:href="@{/admin/admin}">DashBoard</a></li>
+            <li class="dropdown"><a href="javascript:void(0)" th:text="#{menu.verlosungen}">Verlosungen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/admin/a_raffles}" th:text="#{menu.laufend}">Laufend</a>
+                    <a th:href="@{/admin/a_finished}" th:text="#{menu.beendet}">Beendet</a>
+                    <a th:href="@{/admin/a_winnerstable}" th:text="#{menu.gewinner}">Gewinner</a>
+                </div>
+            </li>
+            <li><a th:href="@{/admin/a_about}" th:text="#{menu.ueberuns}">Über uns</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="${userName}">UserName</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/account}" th:text="#{menu.profil}">Account</a>
+                    <a th:href="@{/user/raffles_u}" th:text="#{menu.myraffles}">Meine Lose</a>
+                    <a th:href="@{/admin/createticket}">Los erstellen</a>
+                    <a th:href="@{/admin/registration_a}">User Neu</a>
+                    <a th:href="@{/admin/a_users}">UserList</a>
+                    <a th:href="@{/admin/create_w}">Gewinner bestimmen</a>
+                    <a th:href="@{/logout}" th:text="#{menu.logout}">Logout</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="#{menu.sprachen}">Sprachen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/admin/?lang=de}">DE</a>
+                    <a th:href="@{/admin/?lang=en}">EN</a>
+                    <a th:href="@{/admin/?lang=es}">ES</a>
+                    <a th:href="@{/admin/?lang=fr}">FR</a>
+                    <a th:href="@{/admin/?lang=it}">IT</a>
+                    <a th:href="@{/admin/?lang=tr}">TR</a>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<!-- Hauptinhalt -->
+<div class="content">
+    <h1>Benutzerverwaltung</h1>
+    <!-- Suchformular -->
+    <form method="GET" th:action="@{/a_users}">
+        <input type="text" name="search" placeholder="Benutzer suchen..." th:value="${search}" />
+        <button type="submit">Suchen</button>
+    </form>
+
+    <!-- Tabelle -->
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Benutzername</th>
+            <th>Email</th>
+            <th>Rolle</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}">1</td>
+            <td th:text="${user.username}">Max Mustermann</td>
+            <td th:text="${user.email}">max@example.com</td>
+            <td th:text="${user.role}">ROLE_USER</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Paginierung -->
+    <div class="pagination">
+        <span th:if="${page.hasPrevious()}">
+          <a th:href="@{/a_users(page=${page.number - 1}, search=${search})}">Vorherige</a>
+        </span>
+        <span th:text="'Seite ' + (${page.number} + 1) + ' von ' + ${page.totalPages}">Seite 1 von 5</span>
+        <span th:if="${page.hasNext()}">
+          <a th:href="@{/a_users(page=${page.number + 1}, search=${search})}">Nächste</a>
+        </span>
+    </div>
+</div>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navbar = document.querySelector('.navbar');
+
+        menuToggle.addEventListener('click', function() {
+          navbar.classList.toggle('active');
+        });
+      });
+</script>
+</body>
+</html>

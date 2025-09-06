@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{title.warenkorb}">Warenkorb</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<style>
+    /* Container für den gesamten Warenkorb-Bereich */
+    .ticket-list,
+    .payment-section,
+    .cart-clear-section {
+        max-width: 800px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    /* Überschriften */
+    .ticket-list h2,
+    .payment-section h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    /* Tabelle im Ticket-Listen-Bereich */
+    .ticket-list table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .ticket-list thead {
+        background-color: #f4f4f4;
+    }
+    .ticket-list th,
+    .ticket-list td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+    }
+    .ticket-list th {
+        font-weight: bold;
+    }
+    .ticket-list tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    /* Payment-Sektion */
+    .payment-section form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .payment-section form div {
+        margin-bottom: 10px;
+        width: 100%;
+        text-align: left;
+    }
+    .payment-section form label {
+        cursor: pointer;
+        font-weight: normal;
+    }
+    .payment-section button {
+        background-color: #007BFF;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .payment-section button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Warenkorb-Löschen Schaltfläche */
+    .cart-clear-section {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .cart-clear-section button {
+        background-color: #dc3545;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .cart-clear-section button:hover {
+        background-color: #c82333;
+    }
+    .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* für sanfteres Scrollen auf iOS */
+    }
+
+    /* Responsive Anpassungen */
+    @media (max-width: 800px) {
+        .ticket-list,
+        .payment-section,
+        .cart-clear-section {
+            margin: 10px;
+            padding: 15px;
+        }
+        .ticket-list th,
+        .ticket-list td {
+            padding: 8px;
+        }
+    }
+    @media (max-width: 600px) {
+    .ticket-list th,
+    .ticket-list td {
+        padding: 5px;
+        font-size: 0.9em;
+    }
+}
+</style>
+<body>
+<!-- Header und Navigation -->
+<header>
+    <nav class="navbar" xmlns:th="http://www.w3.org/1999/xhtml">
+        <!-- Linkes Element: Logo -->
+        <div class="logo">
+            <a th:href="@{/user/indexu}">Green Raffle</a>
+        </div>
+        <!-- Menü-Button, der nur auf kleinen Bildschirmen sichtbar ist -->
+        <button class="menu-toggle" aria-label="Menü ein-/ausblenden">☰</button>
+        <!-- Rechtes Element: Navigation -->
+        <ul class="menu">
+            <li><a th:href="@{/user/indexu}" th:text="#{menu.home}">Home</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" th:text="#{menu.verlosungen}">Verlosungen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/raffles_u}" th:text="#{menu.laufend}">Laufend</a>
+                    <a th:href="@{/user/finished_u}" th:text="#{menu.beendet}">Beendet</a>
+                    <a th:href="@{/user/winnerstable_u}" th:text="#{menu.gewinner}">Gewinner</a>
+                </div>
+            </li>
+            <li><a th:href="@{/user/about_u}" th:text="#{menu.ueberuns}">Über uns</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="${userName}">UserName</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/account}" th:text="#{menu.profil}">Account</a>
+                    <a th:href="@{/user/myraffles}" th:text="#{menu.myraffles}">Meine Lose</a>
+                    <a th:href="@{/logout}" th:text="#{menu.logout}">Logout</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="#{menu.sprachen}">Sprachen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/indexu(lang=de)}">DE</a>
+                    <a th:href="@{/user/indexu(lang=en)}">EN</a>
+                    <a th:href="@{/user/indexu(lang=es)}">ES</a>
+                    <a th:href="@{/user/indexu(lang=fr)}">FR</a>
+                    <a th:href="@{/user/indexu(lang=it)}">IT</a>
+                    <a th:href="@{/user/indexu(lang=tr)}">TR</a>
+                </div>
+            </li>
+            <li><a th:href="@{/user/cart}" th:text="#{menu.cart}">Warenkorb</a></li>
+        </ul>
+    </nav>
+</header>
+<div class="ticket-list">
+    <h2 th:text="#{title.warenkorb}">Warenkorb</h2>
+
+    <!-- Falls der Warenkorb leer ist -->
+    <div th:if="${#lists.isEmpty(carts)}">
+        <p th:text="#{cart.isempty}">Dein Warenkorb ist derzeit leer.</p>
+    </div>
+
+    <!-- Falls Tickets vorhanden sind -->
+    <div th:if="${!#lists.isEmpty(carts)}" class="table-responsive">
+        <table>
+            <thead>
+            <tr>
+                <th th:text="#{cart.kategorie}">Kategorie</th>
+                <th th:text="#{cart.raffle_id}">Verlosung Nr.</th>
+                <th th:text="#{cart.price}">Preis</th>
+                <th th:text="#{cart.winamount}">Gewinnbetrag</th>
+                <th th:text="#{cart.quantity}">Anzahl</th>
+                <th th:text="#{cart.start}">Startdatum</th>
+                <th th:text="#{cart.end}">Enddatum</th>
+                <th th:text="#{cart.desc}">Beschreibung</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="cart : ${carts}">
+                <td th:text="${cart.ticketCity}"></td>
+                <td th:text="${cart.raffleId}"></td>
+                <td th:text="${cart.price} + ' €'"></td>
+                <td th:text="${cart.winamount} + ' €'"></td>
+                <td th:text="${cart.quantity}"></td>
+                <td th:text="${#temporals.format(cart.startDateTime, 'dd.MM.yyyy HH:mm')}"></td>
+                <td th:text="${#temporals.format(cart.endDateTime, 'dd.MM.yyyy HH:mm')}"></td>
+                <td th:text="${cart.description}"></td>
+              <!--  <td th:text="${ticket.limmit ? 'Limitiert' : ''}"></td> -->
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Payment section -->
+<div class="payment-section">
+    <h2 th:text="#{cart.methode}">Bezahlmethode wählen</h2>
+    <form th:action="@{/user/cart/checkout}" method="post">
+        <div>
+            <label>
+                <input type="radio" name="paymentMethod" value="paypal" />PayPal
+            </label>
+        </div>
+        <div>
+            <label>
+                <input th:text="#{cart.kreditkarte}" type="radio" name="paymentMethod" />
+            </label>
+        </div>
+        <div>
+            <label>
+                <input th:text="#{cart.balance}" type="radio" name="paymentMethod" value="accountBalance" />
+            </label>
+        </div>
+        <!-- Bei Auswahl einer Zahlungsmethode wird der Button aktiviert -->
+        <button th:text="#{cart.bezahlen}" type="submit" id="buyButton" disabled>Bezahlen</button>
+    </form>
+</div>
+
+<!-- Button zum Löschen des Warenkorbs -->
+<div class="cart-clear-section">
+    <form th:action="@{/user/clear}" method="post">
+        <button th:text="#{cart.delete}" type="submit">Warenkorb löschen</button>
+    </form>
+</div>
+
+<!-- JavaScript, damit der Kaufen-Button aktiviert wird -->
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        const radios = document.querySelectorAll('input[name="paymentMethod"]');
+        const buyButton = document.getElementById('buyButton');
+
+        radios.forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                buyButton.disabled = false;
+            });
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuToggle = document.querySelector('.menu-toggle');
+      const navbar = document.querySelector('.navbar');
+
+      menuToggle.addEventListener('click', function() {
+        navbar.classList.toggle('active');
+      });
+    });
+</script>
+
+</body>
+</html>

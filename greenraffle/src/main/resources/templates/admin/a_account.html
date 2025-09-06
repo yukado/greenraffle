@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{title.myaccount}">GR Mein Account</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<style>
+    /* Basis-Reset */
+        .alert {
+      padding: 15px;
+      background-color: #f9edbe; /* Beispiel: gelber Hintergrund für Info */
+      color: #856404;
+      border: 1px solid #ffeeba;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Zentrierter Container */
+    .container {
+      max-width: 600px;
+      margin: 30px auto;
+      background-color: #ffffff;
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    /* Formularfelder */
+    form label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #333;
+    }
+    form input[type="text"],
+    form input[type="email"],
+    form input[type="password"],
+    form input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    /* Button-Styling */
+    .button-group {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .button-group button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button.submit {
+      background-color: #007BFF;
+      color: #fff;
+    }
+    button.submit:hover {
+      background-color: #0056b3;
+    }
+    button.delete {
+      background-color: #dc3545;
+      color: #fff;
+    }
+    button.delete:hover {
+      background-color: #c82333;
+    }
+    /* Responsive Anpassung */
+    @media (max-width: 600px) {
+      .button-group {
+        flex-direction: column;
+      }
+      .button-group button {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      .button-group button:last-child {
+        margin-bottom: 0;
+      }
+    }
+</style>
+<body>
+<!-- Header und Navigation -->
+<header>
+    <nav class="navbar" xmlns:th="http://www.w3.org/1999/xhtml">
+        <!-- Linkes Element: Logo -->
+        <div class="logo">
+            <a th:href="@{/user/indexu}">Green Raffle</a>
+        </div>
+        <!-- Menü-Button, der nur auf kleinen Bildschirmen sichtbar ist -->
+        <button class="menu-toggle" aria-label="Menü ein-/ausblenden">☰</button>
+        <!-- Rechtes Element: Navigation -->
+        <ul class="menu">
+            <li><a th:href="@{/user/indexu}" th:text="#{menu.home}">Home</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" th:text="#{menu.verlosungen}">Verlosungen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/raffles_u}" th:text="#{menu.laufend}">Laufend</a>
+                    <a th:href="@{/user/finished_u}" th:text="#{menu.beendet}">Beendet</a>
+                    <a th:href="@{/user/winnerstable_u}" th:text="#{menu.gewinner}">Gewinner</a>
+                </div>
+            </li>
+            <li><a th:href="@{/user/about_u}" th:text="#{menu.ueberuns}">Über uns</a></li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="${userName}">UserName</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/account}" th:text="#{menu.profil}">Account</a>
+                    <a th:href="@{/user/myraffles}" th:text="#{menu.myraffles}">Meine Lose</a>
+                    <a th:href="@{/logout}" th:text="#{menu.logout}">Logout</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)" class="dropbtn" th:text="#{menu.sprachen}">Sprachen</a>
+                <div class="dropdown-content">
+                    <a th:href="@{/user/indexu(lang=de)}">DE</a>
+                    <a th:href="@{/user/indexu(lang=en)}">EN</a>
+                    <a th:href="@{/user/indexu(lang=es)}">ES</a>
+                    <a th:href="@{/user/indexu(lang=fr)}">FR</a>
+                    <a th:href="@{/user/indexu(lang=it)}">IT</a>
+                    <a th:href="@{/user/indexu(lang=tr)}">TR</a>
+                </div>
+            </li>
+            <li><a th:href="@{/user/cart}" th:text="#{menu.cart}">Warenkorb</a></li>
+        </ul>
+    </nav>
+</header>
+<!-- Hauptinhalt -->
+<div class="container">
+    <!-- Flash Message -->
+    <div th:if="${message}" class="alert" th:text="#{${message}}"></div>
+    <h2>Mein Account</h2>
+    <form th:action="@{/user/update}" th:object="${user}" method="post">
+        <!-- Die ID als verstecktes Feld -->
+        <input type="hidden" th:field="*{id}">
+
+        <label for="email" th:text="#{account.email}">E-Mail:</label>
+        <input type="email" id="email" th:field="*{email}" required>
+
+        <label for="password" th:text="#{account.passwort}">Passwort:</label>
+        <input type="password" id="password" th:field="*{password}" placeholder="Neues Passwort eingeben">
+
+        <label for="vorname" th:text="#{account.vorname}">Vorname:</label>
+        <input type="text" id="vorname" th:field="*{vorname}" required>
+
+        <label for="nachname" th:text="#{account.nachname}">Nachname:</label>
+        <input type="text" id="nachname" th:field="*{nachname}" required>
+
+        <label for="gebdatum" th:text="#{account.gebdat}">Geburtsdatum:</label>
+        <input type="date" id="gebdatum" th:field="*{gebdatum}" required>
+
+        <label for="country" th:text="#{account.land}">Land:</label>
+        <input type="text" id="country" th:field="*{country}" required>
+
+        <label for="iban" th:text="#{account.iban}">IBAN:</label>
+        <input type="text" id="iban" th:field="*{iban}" required>
+
+        <!-- Button-Gruppe -->
+        <div class="button-group">
+            <button type="submit" class="submit" th:text="#{account.aktualisieren}">Daten aktualisieren</button>
+            <button type="button" class="delete" onclick="confirmDelete()" th:text="#{account.delete}">Account löschen</button>
+        </div>
+    </form>
+</div>
+
+<!-- JavaScript-Block mit Thymeleaf-Integration -->
+<script th:inline="javascript">
+    function confirmDelete() {
+      if (confirm("Möchtest du deinen Account wirklich löschen?")) {
+        /* Mit Thymeleaf wird hier der URL-Parameter für die Löschung eingebunden */
+        window.location.href = /*[[@{/user/delete}]]*/ "";
+      }
+    }
+</script>
+</body>
+</html>

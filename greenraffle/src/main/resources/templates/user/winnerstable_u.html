@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="#{title.gewinner_tabelle}">GR Gewinnertabelle</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<!-- Header und Navigation -->
+<header>
+  <!-- Hier wird das Fragment Navbar eingebunden -->
+  <!-- Datei: src/main/resources/templates/fragments/navbar.html -->
+  <nav class="navbar" xmlns:th="http://www.w3.org/1999/xhtml">
+    <!-- Linkes Element: Logo -->
+    <div class="logo">
+      <a th:href="@{/user/indexu}">Green Raffle</a>
+    </div>
+    <!-- Menü-Button, der nur auf kleinen Bildschirmen sichtbar ist -->
+    <button class="menu-toggle" aria-label="Menü ein-/ausblenden">☰</button>
+    <!-- Rechtes Element: Navigation -->
+    <ul class="menu">
+      <li><a th:href="@{/user/indexu}" th:text="#{menu.home}">Home</a></li>
+      <li class="dropdown">
+        <a href="javascript:void(0)" th:text="#{menu.verlosungen}">Verlosungen</a>
+        <div class="dropdown-content">
+          <a th:href="@{/user/raffles_u}" th:text="#{menu.laufend}">Laufend</a>
+          <a th:href="@{/user/finished_u}" th:text="#{menu.beendet}">Beendet</a>
+          <a th:href="@{/user/winnerstable_u}" th:text="#{menu.gewinner}">Gewinner</a>
+        </div>
+      </li>
+      <li><a th:href="@{/user/about_u}" th:text="#{menu.ueberuns}">Über uns</a></li>
+      <li class="dropdown">
+        <a href="javascript:void(0)" class="dropbtn" th:text="${userName}">UserName</a>
+        <div class="dropdown-content">
+          <a th:href="@{/user/account}" th:text="#{menu.profil}">Account</a>
+
+          <a th:href="@{/user/myraffles}" th:text="#{menu.myraffles}">Meine Lose</a>
+          <a th:href="@{/logout}" th:text="#{menu.logout}">Logout</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="javascript:void(0)" class="dropbtn" th:text="#{menu.sprachen}">Sprachen</a>
+        <div class="dropdown-content">
+          <a th:href="@{/user/indexu(lang=de)}">DE</a>
+          <a th:href="@{/user/indexu(lang=en)}">EN</a>
+          <a th:href="@{/user/indexu(lang=es)}">ES</a>
+          <a th:href="@{/user/indexu(lang=fr)}">FR</a>
+          <a th:href="@{/user/indexu(lang=it)}">IT</a>
+          <a th:href="@{/user/indexu(lang=tr)}">TR</a>
+        </div>
+      </li>
+      <li><a th:href="@{/user/cart}" th:text="#{menu.cart}">Warenkorb</a></li>
+    </ul>
+  </nav>
+
+</header>
+
+</body>
+</html>
